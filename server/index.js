@@ -14,11 +14,9 @@ const io = socketIo(server, {
 io.on('connection', (socket) => {
   console.log('Client connected: ', socket.id);
 
-  socket.emit('notification', { message: 'Bem-vindo ao servidor WebSocket!' });
-
   setInterval(() => {
-    io.emit('notification', { message: 'Nova notificação!' });
-  }, 5000);
+    io.emit('notification', { message: 'Nova notificação!', created_at: new Date() });
+  }, 60 * 1000);
 
   socket.on('disconnect', () => {
     console.log('Client disconnected: ', socket.id);
