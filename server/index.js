@@ -1,6 +1,8 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const baseMessages = require('./base-messages')
+const {v4: uuid} = require('uuid')
 
 const app = express();
 const server = http.createServer(app);
@@ -11,11 +13,19 @@ const io = socketIo(server, {
   }
 });
 
+const getRandomInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
 io.on('connection', (socket) => {
   console.log('Client connected: ', socket.id);
 
   setInterval(() => {
-    io.emit('notification', { message: 'Nova notificação!', created_at: new Date() });
+    const messageIndex = getRandomInt(0, baseMessages.length)
+    const message = baseMessages[messageIndex]
+    io.emit('notification', { id: uuid(), message: message, created_at: new Date() });
   }, 60 * 1000);
 
   socket.on('disconnect', () => {
